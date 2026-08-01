@@ -77,18 +77,46 @@ cyl(7,7,0.1,0xE2CFA0,0,0.05,0,null,24);
 
 box(30,0.1,90,0xCFC39B,0,0.05,38);
 
-for(let i=-2;i<=2;i++){
-  const mx=-38+i*16;
-  cone(9+Math.abs(i), 16+((i+5)%3)*4, 0x7FA36E, i*14, (16+((i+5)%3)*4)/2, -48-Math.abs(i)*2, null, 5);
-}
-
 function tree(x,z,s){
   s=s||1; const g=new THREE.Group(); g.position.set(x,0,z); scene.add(g);
   cyl(0.25*s,0.35*s,1.6*s,0x8A6A42,0,0.8*s,0,g);
   sph(1.5*s,0x5F8F4E,0,2.6*s,0,g);
   return g;
 }
-tree(-10,-25); tree(9,-24,0.8); tree(-30,3,1.1); tree(28,-4); tree(31,3,0.9); tree(-33,22,0.8); tree(12,22,0.9); tree(-8,26,0.7);
+
+const ENVLOADER=new THREE.GLTFLoader();
+const CLOUDS=[];
+function prop(file,x,z,h,ry){
+  ENVLOADER.load('assets/env/'+file+'.gltf',function(g){
+    const m=g.scene;
+    const box=new THREE.Box3().setFromObject(m);
+    const s=h/Math.max(box.max.y-box.min.y,0.001);
+    m.scale.setScalar(s);
+    m.position.set(x,-box.min.y*s,z);
+    m.rotation.y=ry||0;
+    scene.add(m);
+    if(file.indexOf('cloud')===0){ m.position.y=22+Math.random()*6; CLOUDS.push(m); }
+  },undefined,function(e){ console.error(file,e); });
+}
+prop('mountain_A_grass_trees',-30,-52,18);
+prop('mountain_B_grass_trees',2,-56,22);
+prop('mountain_C_grass_trees',30,-50,15);
+prop('hills_A_trees',-52,-38,9);
+prop('hill_single_A',52,-40,7);
+prop('tree_single_A',-10,-25,7); prop('tree_single_A',28,-4,6,1.2); prop('tree_single_A',12,22,5.5,2.1); prop('tree_single_A',-33,22,6,0.6);
+prop('tree_single_B',9,-24,5); prop('tree_single_B',31,3,6,1.5); prop('tree_single_B',-30,3,7,2.6); prop('tree_single_B',-8,26,4.5,0.9);
+prop('trees_A_medium',-44,8,6); prop('trees_A_medium',44,-8,6,1); prop('trees_A_medium',50,20,5,2);
+prop('trees_B_large',-48,-12,8); prop('trees_B_large',46,34,7,0.7);
+prop('rock_single_B',-6,18,1.2); prop('rock_single_D',24,-24,1.5,1); prop('rock_single_B',38,16,1,2);
+prop('building_windmill_green',-36,-24,9,0.8);
+prop('building_watermill_green',-28,7,5,1.6);
+prop('building_well_green',7,-7,2.6);
+prop('building_market_green',25,17,4.5,-2.4);
+prop('building_home_B_green',-44,31,5,0.9);
+prop('barrel',15,7,1.1); prop('crate_A_big',22,9,1,0.5); prop('sack',17,6.2,0.8);
+prop('wheelbarrow',-12,-2,1.2,1.2); prop('tent',-32,-19,2.5,0.4); prop('flag_green',6,3,3);
+prop('bucket_water',-14,10,0.7); prop('resource_lumber',-6,-22,0.8,1.1);
+prop('cloud_big',-20,-20,2.5); prop('cloud_small',25,10,1.6); prop('cloud_big',5,32,2.2);
 
 const houseG = new THREE.Group(); houseG.position.set(SITES.house[0],0,SITES.house[1]); scene.add(houseG);
 box(7,3.4,5.5,0xF2E9D8,0,1.7,0,houseG);
@@ -337,6 +365,7 @@ function frame(now){
   winMats.forEach(m=>m.color.setHex(night>0.5?0xFFE28A:0xF7C948));
 
   MIX.forEach(m=>m.update(dt));
+  CLOUDS.forEach(c=>{ c.position.x+=0.5*dt; if(c.position.x>70)c.position.x=-70; });
   let mx=(keys['a']||keys['arrowleft']?-1:0)+(keys['d']||keys['arrowright']?1:0)+tvec.x;
   let mz=(keys['w']||keys['arrowup']?-1:0)+(keys['s']||keys['arrowdown']?1:0)+tvec.y;
   const ml=Math.hypot(mx,mz);
