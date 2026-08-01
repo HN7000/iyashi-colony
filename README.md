@@ -33,6 +33,7 @@ AIと共に生きる自給自足コロニーの構想を、動く絵地図にし
 ## 技術メモ
 
 - 素のHTML + SVG + JavaScript（フレームワーク・ビルドなし）
+- 3D版キャラクター: [KayKit Character Pack: Adventurers](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0) by Kay Lousberg（CC0・クレジット不要ですが感謝を込めて記載）
 - 昼夜サイクル：空の色をキーフレーム補間、太陽と月が弧を描いて移動、夜は星・窓明かり・焚き火の輝き
 - 住人：ウェイポイント巡回 + 到着時に吹き出しで発話
 - フォント：[Zen Maru Gothic](https://fonts.google.com/specimen/Zen+Maru+Gothic)

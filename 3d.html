@@ -33,12 +33,14 @@
   <div id="hint">PC: WASD / 矢印キーで移動　スマホ: 画面をドラッグ</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 300);
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth, innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild(renderer.domElement);
 const ui = document.getElementById('ui');
 scene.fog = new THREE.Fog(0xBEE0EC, 70, 180);
@@ -154,31 +156,48 @@ function eye(g,x,y,z){
   const hl=sph(0.035,0xFFFFFF,x+0.035,y+0.035,z+0.075,g); hl.material=new THREE.MeshBasicMaterial({color:0xFFFFFF});
 }
 function blush(g,x,y,z){ const p=sph(0.1,0xF2A4A4,x,y,z,g); p.scale.set(1,0.55,0.45); }
-function person(shirt,hair,skin){
+const MIX=[]; let LOADED=0; const TOTAL=5;
+function upHint(){ const h=document.getElementById('hint');
+  h.textContent = LOADED<TOTAL ? '住人を呼んでいます… '+LOADED+'/'+TOTAL : 'PC: WASD / 矢印キーで移動　スマホ: 画面をドラッグ'; }
+function person(file){
   const g=new THREE.Group();
-  const sh=new THREE.Mesh(new THREE.CircleGeometry(0.65,10),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.15}));
+  const sh=new THREE.Mesh(new THREE.CircleGeometry(0.65,12),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.15}));
   sh.rotation.x=-Math.PI/2; sh.position.y=0.02; g.add(sh);
-  const b=sph(0.6,shirt,0,0.62,0,g); b.scale.y=0.85;
-  sph(0.17,shirt,-0.58,0.72,0,g); sph(0.17,shirt,0.58,0.72,0,g);
-  sph(0.16,skin||0xF0C8A0,-0.24,0.13,0.1,g); sph(0.16,skin||0xF0C8A0,0.24,0.13,0.1,g);
-  sph(0.75,skin||0xF0C8A0,0,1.8,0,g);
-  const h=sph(0.79,hair,0,2.04,-0.1,g); h.scale.y=0.6;
-  eye(g,-0.27,1.86,0.65); eye(g,0.27,1.86,0.65);
-  blush(g,-0.47,1.62,0.55); blush(g,0.47,1.62,0.55);
+  new THREE.GLTFLoader().load('assets/'+file, function(gltf){
+    const m=gltf.scene;
+    const box=new THREE.Box3().setFromObject(m);
+    const s=2.4/(box.max.y-box.min.y);
+    m.scale.setScalar(s); m.position.y=-box.min.y*s;
+    g.add(m);
+    const mixer=new THREE.AnimationMixer(m);
+    const find=n=>gltf.animations.find(c=>c.name===n)||gltf.animations.find(c=>c.name.toLowerCase().indexOf(n.toLowerCase())>=0);
+    const idle=mixer.clipAction(find('Idle'));
+    const walk=mixer.clipAction(find('Walking_A')||find('Running_A')||find('Idle'));
+    idle.play();
+    g.userData.a={mixer,idle,walk,cur:'idle'};
+    MIX.push(mixer);
+    LOADED++; upHint();
+  }, undefined, function(e){ console.error(file,e); LOADED++; upHint(); });
   scene.add(g); return g;
 }
+function setAnim(g,to){
+  const a=g.userData.a; if(!a||a.cur===to)return;
+  const f=a.cur==='walk'?a.walk:a.idle, t=to==='walk'?a.walk:a.idle;
+  f.fadeOut(0.25); t.reset().fadeIn(0.25).play(); a.cur=to;
+}
 
-const player = person(0x2E6E8E,0x2C2C2A);
+const player = person('Knight.glb');
 player.position.set(0,0,8);
+upHint();
 
 const npcs=[
-{g:person(0x4A8B6F,0x5F4A3A),x:0,z:-15,sp:2.2,i:0,ph:'wait',tm:2,wp:[
+{g:person('Barbarian.glb'),x:0,z:-15,sp:2.2,i:0,ph:'wait',tm:2,wp:[
   [0,-15,'いってきます',2],[0,0,null,0.3],[-20,-7,'野菜が元気！',3.5],[0,0,null,0.3],[-16,12,'いい湯だなあ',4],[0,0,null,0.3],[0,-15,'ただいま',2.5]]},
-{g:person(0x7A5C9E,0x2C2C2A,0xE8B890),x:3,z:2,sp:2.4,i:0,ph:'wait',tm:4,wp:[
+{g:person('Mage.glb'),x:3,z:2,sp:2.4,i:0,ph:'wait',tm:4,wp:[
   [3,2,'ごはんにしよう',2.5],[17,-12,'AIが動いたよ',3.5],[3,2,null,0.5],[16,9,'こんにちは',3],[3,2,null,1]]},
-{g:person(0xC96A4A,0x8A6A42),x:-15,z:12,sp:2,i:0,ph:'wait',tm:6,wp:[
+{g:person('Rogue.glb'),x:-15,z:12,sp:2,i:0,ph:'wait',tm:6,wp:[
   [-15,12,'ふう、極楽',4],[-2,3,'いいにおい！',3],[15,10,'野菜ください',3],[-2,3,null,0.5]]},
-{g:person(0x3E7A8C,0x8A6A42),x:19,z:8.6,sp:2,i:0,ph:'wait',tm:2,wp:[
+{g:person('Rogue_Hooded.glb'),x:19,z:8.6,sp:2,i:0,ph:'wait',tm:2,wp:[
   [19,8.6,'いらっしゃい！',2.5],[19,8.6,null,6]]}
 ];
 npcs.forEach(n=>n.g.position.set(n.x,0,n.z));
@@ -299,6 +318,7 @@ function frame(now){
   fire.scale.y=0.9+0.25*Math.abs(Math.sin(T*9))+0.4*night;
   winMats.forEach(m=>m.color.setHex(night>0.5?0xFFE28A:0xF7C948));
 
+  MIX.forEach(m=>m.update(dt));
   let mx=(keys['a']||keys['arrowleft']?-1:0)+(keys['d']||keys['arrowright']?1:0)+tvec.x;
   let mz=(keys['w']||keys['arrowup']?-1:0)+(keys['s']||keys['arrowdown']?1:0)+tvec.y;
   const ml=Math.hypot(mx,mz);
@@ -307,8 +327,8 @@ function frame(now){
     player.position.x=Math.max(-55,Math.min(55,player.position.x+mx*7*dt));
     player.position.z=Math.max(-42,Math.min(50,player.position.z+mz*7*dt));
     player.rotation.y=Math.atan2(mx,mz);
-    player.position.y=Math.abs(Math.sin(T*10))*0.12;
-  } else player.position.y*=0.8;
+    setAnim(player,'walk');
+  } else setAnim(player,'idle');
 
   camera.position.x+= (player.position.x - camera.position.x)*0.08;
   camera.position.y+= (player.position.y+9 - camera.position.y)*0.08;
@@ -321,7 +341,8 @@ function frame(now){
     else{ const dx=n.wp[n.i][0]-n.x, dz=n.wp[n.i][1]-n.z, d=Math.hypot(dx,dz);
       if(d<0.15){ n.x=n.wp[n.i][0]; n.z=n.wp[n.i][1]; n.ph='wait'; n.tm=Math.max(n.wp[n.i][3],0.1); }
       else{ n.x+=dx/d*n.sp*dt; n.z+=dz/d*n.sp*dt; n.g.rotation.y=Math.atan2(dx,dz); } }
-    n.g.position.set(n.x, n.ph==='move'?Math.abs(Math.sin(T*10))*0.1:0, n.z);
+    n.g.position.set(n.x, 0, n.z);
+    setAnim(n.g, n.ph==='move'?'walk':'idle');
     const pd=Math.hypot(player.position.x-n.x, player.position.z-n.z);
     let txt=null;
     if(n.ph==='wait'&&n.wp[n.i][2]) txt=n.wp[n.i][2];
