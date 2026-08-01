@@ -107,6 +107,9 @@ box(1.8,0.12,1.1,0x2E4A78,1.5,5.7,1,labG).rotation.x=-0.4;
 const robot = new THREE.Group(); robot.position.set(4.6,0,1.5); labG.add(robot);
 box(1,1.2,0.8,0x9AA7B8,0,0.9,0,robot);
 sph(0.45,0xB8C4D2,0,1.9,0,robot);
+eye(robot,-0.15,1.95,0.38); eye(robot,0.15,1.95,0.38);
+cyl(0.03,0.03,0.5,0x5F5E5A,0,2.5,0,robot);
+sph(0.09,0xD85A30,0,2.8,0,robot);
 
 const farmG = new THREE.Group(); farmG.position.set(SITES.farm[0],0,SITES.farm[1]); scene.add(farmG);
 box(10,0.3,7,0xC9A26B,0,0.15,0,farmG);
@@ -122,7 +125,13 @@ cyl(4.6,4.6,0.5,0x8B8B7A,0,0.25,0,onsenG,18);
 cyl(4,4,0.55,0x9FD4E4,0,0.3,0,onsenG,18);
 for(let i=0;i<7;i++){ const a=i/7*Math.PI*2; sph(0.55,0x77776A,Math.cos(a)*4.5,0.5,Math.sin(a)*4.5,onsenG); }
 sph(0.5,0xF0C8A0,-1.2,0.75,0.3,onsenG);
+{ const h=sph(0.52,0x5F4A3A,-1.2,0.92,0.24,onsenG); h.scale.y=0.55;
+  eye(onsenG,-1.38,0.8,0.72); eye(onsenG,-1.02,0.8,0.72);
+  blush(onsenG,-1.5,0.66,0.6); blush(onsenG,-0.9,0.66,0.6); }
 sph(0.5,0xE8B890,1.1,0.75,-0.6,onsenG);
+{ const h=sph(0.52,0x8A8A8A,1.1,0.92,-0.66,onsenG); h.scale.y=0.55;
+  eye(onsenG,0.92,0.8,-0.18); eye(onsenG,1.28,0.8,-0.18);
+  blush(onsenG,0.8,0.66,-0.3); blush(onsenG,1.4,0.66,-0.3); }
 const steams=[];
 function steam(x,y,z,g){ const s=sph(0.45,0xFFFFFF,x,y,z,g); s.material.transparent=true; s.material.opacity=0.6; steams.push({m:s,b:y,p:Math.random()*6}); }
 steam(-1.2,1.6,0.3,onsenG); steam(1.1,1.7,-0.6,onsenG); steam(0,1.5,1,onsenG);
@@ -140,13 +149,22 @@ cyl(0.09,0.09,1.6,0x8A6A42,0.5,0.4,0).rotation.z=-0.7;
 const fire = cone(0.5,1,0xE8862E,0,0.5,0,null,6);
 steam(0,1.8,0,null);
 
+function eye(g,x,y,z){
+  const e=sph(0.1,0x2C2C2A,x,y,z,g); e.material=new THREE.MeshBasicMaterial({color:0x2C2C2A});
+  const hl=sph(0.035,0xFFFFFF,x+0.035,y+0.035,z+0.075,g); hl.material=new THREE.MeshBasicMaterial({color:0xFFFFFF});
+}
+function blush(g,x,y,z){ const p=sph(0.1,0xF2A4A4,x,y,z,g); p.scale.set(1,0.55,0.45); }
 function person(shirt,hair,skin){
   const g=new THREE.Group();
-  const sh=new THREE.Mesh(new THREE.CircleGeometry(0.6,10),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.15}));
+  const sh=new THREE.Mesh(new THREE.CircleGeometry(0.65,10),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.15}));
   sh.rotation.x=-Math.PI/2; sh.position.y=0.02; g.add(sh);
-  cyl(0.42,0.52,1.3,shirt,0,0.85,0,g);
-  sph(0.5,skin||0xF0C8A0,0,2,0,g);
-  const h=sph(0.52,hair,0,2.12,-0.06,g); h.scale.y=0.62;
+  const b=sph(0.6,shirt,0,0.62,0,g); b.scale.y=0.85;
+  sph(0.17,shirt,-0.58,0.72,0,g); sph(0.17,shirt,0.58,0.72,0,g);
+  sph(0.16,skin||0xF0C8A0,-0.24,0.13,0.1,g); sph(0.16,skin||0xF0C8A0,0.24,0.13,0.1,g);
+  sph(0.75,skin||0xF0C8A0,0,1.8,0,g);
+  const h=sph(0.79,hair,0,2.04,-0.1,g); h.scale.y=0.6;
+  eye(g,-0.27,1.86,0.65); eye(g,0.27,1.86,0.65);
+  blush(g,-0.47,1.62,0.55); blush(g,0.47,1.62,0.55);
   scene.add(g); return g;
 }
 
@@ -167,24 +185,62 @@ npcs.forEach(n=>n.g.position.set(n.x,0,n.z));
 
 function animal(){ const g=new THREE.Group(); scene.add(g); return g; }
 const cat = animal(); cat.position.set(3,0,-15.5);
-box(0.9,0.5,0.5,0xE8862E,0,0.45,0,cat); sph(0.32,0xE8862E,0.55,0.75,0,cat);
-cone(0.1,0.25,0xE8862E,0.45,1,0.12,cat); cone(0.1,0.25,0xE8862E,0.65,1,0.12,cat);
+{ const b=sph(0.5,0xE8862E,0,0.42,0,cat); b.scale.set(1.1,0.8,0.95);
+  sph(0.44,0xE8862E,0,1.02,0.16,cat);
+  cone(0.14,0.3,0xE8862E,-0.22,1.44,0.12,cat); cone(0.14,0.3,0xE8862E,0.22,1.44,0.12,cat);
+  cone(0.07,0.14,0xF2A4A4,-0.22,1.4,0.2,cat); cone(0.07,0.14,0xF2A4A4,0.22,1.4,0.2,cat);
+  eye(cat,-0.16,1.1,0.53); eye(cat,0.16,1.1,0.53);
+  sph(0.06,0xF2A4A4,0,0.98,0.58,cat);
+  blush(cat,-0.3,0.94,0.44); blush(cat,0.3,0.94,0.44);
+  sph(0.1,0xE8862E,0,0.6,-0.55,cat); sph(0.09,0xE8862E,0.12,0.78,-0.62,cat); sph(0.08,0xE8862E,0.2,0.94,-0.6,cat); }
 const dog = animal(); dog.position.set(-3,0,-14.5);
-box(1,0.6,0.55,0x8A6A42,0,0.5,0,dog); sph(0.36,0x8A6A42,0.65,0.9,0,dog);
+const dogTail = new THREE.Group();
+{ const b=sph(0.55,0x8A6A42,0,0.48,0,dog); b.scale.set(1.1,0.85,0.95);
+  sph(0.46,0x8A6A42,0,1.12,0.2,dog);
+  const e1=sph(0.17,0x6E5232,-0.4,1.24,0.14,dog); e1.scale.set(0.6,1.2,0.45);
+  const e2=sph(0.17,0x6E5232,0.4,1.24,0.14,dog); e2.scale.set(0.6,1.2,0.45);
+  eye(dog,-0.17,1.2,0.58); eye(dog,0.17,1.2,0.58);
+  sph(0.08,0x2C2C2A,0,1.05,0.64,dog);
+  const tng=sph(0.08,0xF2A4A4,0,0.92,0.6,dog); tng.scale.set(1,0.5,1.4);
+  blush(dog,-0.32,1.02,0.5); blush(dog,0.32,1.02,0.5);
+  dog.add(dogTail); dogTail.position.set(0,0.72,-0.5);
+  sph(0.14,0x8A6A42,0,0.12,-0.14,dogTail); }
 const deer = animal(); deer.position.set(-32,0,26);
-box(1.4,0.8,0.6,0xC29B6B,0,1,0,deer); sph(0.4,0xC29B6B,0.85,1.7,0,deer);
-cyl(0.07,0.07,1,0xA9814F,-0.4,0.5,0.2,deer); cyl(0.07,0.07,1,0xA9814F,0.4,0.5,0.2,deer);
-cyl(0.07,0.07,1,0xA9814F,-0.4,0.5,-0.2,deer); cyl(0.07,0.07,1,0xA9814F,0.4,0.5,-0.2,deer);
-cyl(0.04,0.04,0.6,0x8A6A42,0.8,2.3,0,deer).rotation.z=0.4;
+{ const b=sph(0.68,0xC29B6B,0,1.05,0,deer); b.scale.set(0.9,0.8,1.25);
+  cyl(0.08,0.08,0.9,0xA9814F,-0.35,0.45,0.5,deer); cyl(0.08,0.08,0.9,0xA9814F,0.35,0.45,0.5,deer);
+  cyl(0.08,0.08,0.9,0xA9814F,-0.35,0.45,-0.5,deer); cyl(0.08,0.08,0.9,0xA9814F,0.35,0.45,-0.5,deer);
+  sph(0.48,0xC29B6B,0,1.95,0.65,deer);
+  const ie1=sph(0.14,0xC29B6B,-0.4,2.3,0.55,deer); ie1.scale.set(0.6,1.1,0.4);
+  const ie2=sph(0.14,0xC29B6B,0.4,2.3,0.55,deer); ie2.scale.set(0.6,1.1,0.4);
+  eye(deer,-0.18,2.02,1.06); eye(deer,0.18,2.02,1.06);
+  sph(0.07,0x2C2C2A,0,1.85,1.12,deer);
+  blush(deer,-0.33,1.86,0.98); blush(deer,0.33,1.86,0.98);
+  cyl(0.04,0.04,0.5,0x8A6A42,-0.18,2.55,0.5,deer).rotation.z=0.35;
+  cyl(0.04,0.04,0.5,0x8A6A42,0.18,2.55,0.5,deer).rotation.z=-0.35;
+  sph(0.09,0xFFFFFF,-0.25,1.45,-0.3,deer); sph(0.09,0xFFFFFF,0.3,1.5,0.1,deer); sph(0.09,0xFFFFFF,0,1.55,-0.55,deer);
+  sph(0.14,0xFFFFFF,0,1.15,-0.85,deer); }
 const bearBush = tree(33,4,0.9);
 const bear = animal(); bear.position.set(33,-1.6,5.5);
-sph(0.8,0x8A6A42,0,0.8,0,bear); sph(0.55,0x8A6A42,0,1.9,0,bear);
-sph(0.2,0x8A6A42,-0.4,2.35,0,bear); sph(0.2,0x8A6A42,0.4,2.35,0,bear);
-sph(0.26,0xC9A26B,0,1.8,0.42,bear);
+{ sph(0.8,0x8A6A42,0,0.8,0,bear);
+  const bl=sph(0.5,0xC9A26B,0,0.75,0.45,bear); bl.scale.set(1,1,0.55);
+  sph(0.55,0x8A6A42,0,1.9,0,bear);
+  sph(0.2,0x8A6A42,-0.4,2.35,0,bear); sph(0.2,0x8A6A42,0.4,2.35,0,bear);
+  sph(0.1,0xC9A26B,-0.4,2.35,0.12,bear); sph(0.1,0xC9A26B,0.4,2.35,0.12,bear);
+  sph(0.26,0xC9A26B,0,1.8,0.42,bear);
+  sph(0.08,0x2C2C2A,0,1.86,0.64,bear);
+  eye(bear,-0.22,2.02,0.48); eye(bear,0.22,2.02,0.48);
+  blush(bear,-0.4,1.8,0.34); blush(bear,0.4,1.8,0.34); }
 const mky = animal(); mky.position.set(-14,0,-36);
-sph(0.45,0x9C6B4A,0,0.6,0,mky); sph(0.34,0xE8C9A8,0,1.25,0.1,mky);
+{ sph(0.45,0x9C6B4A,0,0.6,0,mky); sph(0.4,0x9C6B4A,0,1.28,0.05,mky);
+  const f=sph(0.3,0xE8C9A8,0,1.24,0.22,mky); f.scale.set(1,0.9,0.55);
+  sph(0.13,0x9C6B4A,-0.4,1.32,0,mky); sph(0.13,0x9C6B4A,0.4,1.32,0,mky);
+  eye(mky,-0.12,1.32,0.42); eye(mky,0.12,1.32,0.42);
+  blush(mky,-0.24,1.18,0.36); blush(mky,0.24,1.18,0.36); }
 const mky2 = animal(); mky2.position.set(-12.4,0,-35.2);
-sph(0.34,0x9C6B4A,0,0.45,0,mky2); sph(0.26,0xE8C9A8,0,0.95,0.08,mky2);
+{ sph(0.34,0x9C6B4A,0,0.45,0,mky2); sph(0.3,0x9C6B4A,0,0.98,0.04,mky2);
+  const f=sph(0.22,0xE8C9A8,0,0.95,0.17,mky2); f.scale.set(1,0.9,0.55);
+  sph(0.1,0x9C6B4A,-0.3,1,0,mky2); sph(0.1,0x9C6B4A,0.3,1,0,mky2);
+  eye(mky2,-0.09,1.0,0.32); eye(mky2,0.09,1.0,0.32); }
 
 const van = animal(); van.position.set(-20,0,32);
 box(3.4,1.2,1.7,0x6FB39E,0,1,0,van);
@@ -278,6 +334,7 @@ function frame(now){
   cat.position.y=0; cat.rotation.y=Math.sin(T*0.6)*0.6;
   dog.position.x=-3+Math.sin(T*0.9)*3; dog.rotation.y=Math.cos(T*0.9)>0?Math.PI/2:-Math.PI/2;
   dog.position.y=Math.abs(Math.sin(T*8))*0.1;
+  dogTail.rotation.y=Math.sin(T*13)*0.7;
   const pdc=Math.hypot(player.position.x-cat.position.x-3+3, player.position.z-cat.position.z);
   const pcat=Math.hypot(player.position.x-3, player.position.z+15.5);
   if(pcat<4) place(catB,3,1.6,-15.5,'にゃー'); else catB.style.display='none';
