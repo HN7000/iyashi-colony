@@ -24,13 +24,23 @@
     text-decoration:none; pointer-events:auto; }
   #ttl { position:absolute; right:14px; top:12px; color:#FFFFFF; font-size:13px;
     text-shadow:0 1px 3px rgba(0,0,0,0.35); }
+  .prompt { position:absolute; transform:translate(-50%,-100%); background:#3A4A2A; color:#FFFDF6;
+    border-radius:999px; padding:4px 12px; font-size:12px; white-space:nowrap; display:none;
+    pointer-events:auto; cursor:pointer; }
+  #dlg { position:absolute; left:50%; bottom:56px; transform:translateX(-50%); width:min(560px,90%);
+    background:#FFFDF6; border:1px solid #C9BFA4; border-radius:14px; padding:14px 18px;
+    display:none; pointer-events:auto; cursor:pointer; }
+  #dlgName { font-size:13px; font-weight:700; color:#4A8B6F; margin-bottom:4px; }
+  #dlgText { font-size:15px; color:#3A4A2A; line-height:1.6; }
+  #dlgHint { font-size:11px; color:#8A8A7E; text-align:right; margin-top:6px; }
 </style>
 </head>
 <body>
 <div id="ui">
   <a id="back" href="index.html">← 絵地図にもどる</a>
   <div id="ttl">癒しのコロニー 3D</div>
-  <div id="hint">PC: WASD移動・ドラッグ視点・ホイールzoom・Q/E回転　スマホ: 1本指移動・2本指ズーム回転</div>
+  <div id="hint">PC: WASD移動・ドラッグ視点・ホイールzoom・Q/E回転・Fで話す　スマホ: 1本指移動・2本指ズーム回転・吹き出しタップで話す</div>
+  <div id="dlg"><div id="dlgName"></div><div id="dlgText"></div><div id="dlgHint">タップ / F で続ける</div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -219,14 +229,18 @@ player.position.set(0,0,8);
 upHint();
 
 const npcs=[
-{g:person('Barbarian.glb'),x:0,z:-15,sp:2.2,i:0,ph:'wait',tm:2,wp:[
-  [0,-15,'いってきます',2],[0,0,null,0.3],[-20,-7,'野菜が元気！',3.5],[0,0,null,0.3],[-16,12,'いい湯だなあ',4],[0,0,null,0.3],[0,-15,'ただいま',2.5]]},
-{g:person('Mage.glb'),x:3,z:2,sp:2.4,i:0,ph:'wait',tm:4,wp:[
-  [3,2,'ごはんにしよう',2.5],[17,-12,'AIが動いたよ',3.5],[3,2,null,0.5],[16,9,'こんにちは',3],[3,2,null,1]]},
-{g:person('Rogue.glb'),x:-15,z:12,sp:2,i:0,ph:'wait',tm:6,wp:[
-  [-15,12,'ふう、極楽',4],[-2,3,'いいにおい！',3],[15,10,'野菜ください',3],[-2,3,null,0.5]]},
-{g:person('Rogue_Hooded.glb'),x:19,z:8.6,sp:2,i:0,ph:'wait',tm:2,wp:[
-  [19,8.6,'いらっしゃい！',2.5],[19,8.6,null,6]]}
+{g:person('Barbarian.glb'),name:'ガル（畑担当）',x:0,z:-15,sp:2.2,i:0,ph:'wait',tm:2,wp:[
+  [0,-15,'いってきます',2],[0,0,null,0.3],[-20,-7,'野菜が元気！',3.5],[0,0,null,0.3],[-16,12,'いい湯だなあ',4],[0,0,null,0.3],[0,-15,'ただいま',2.5]],
+  lines:['おっ、遊びに来たのか。','この畑はAIが土の状態を見てくれるから、迷わず種をまけるんだ。','今日採れた野菜、あとで広場に持っていくよ。']},
+{g:person('Mage.glb'),name:'セラ（AIラボ）',x:3,z:2,sp:2.4,i:0,ph:'wait',tm:4,wp:[
+  [3,2,'ごはんにしよう',2.5],[17,-12,'AIが動いたよ',3.5],[3,2,null,0.5],[16,9,'こんにちは',3],[3,2,null,1]],
+  lines:['ようこそ、ラボへ。','考える仕事はぜんぶあの子（ロボット）に任せてるの。','浮いた時間で、みんな好きなことをしてるわ。']},
+{g:person('Rogue.glb'),name:'ノア',x:-15,z:12,sp:2,i:0,ph:'wait',tm:6,wp:[
+  [-15,12,'ふう、極楽',4],[-2,3,'いいにおい！',3],[15,10,'野菜ください',3],[-2,3,null,0.5]],
+  lines:['やあ。','温泉、入っていくといいよ。急かす人はここにいないから。','元気になったら、また何か一緒にやろう。']},
+{g:person('Rogue_Hooded.glb'),name:'リン（市場）',x:19,z:8.6,sp:2,i:0,ph:'wait',tm:2,wp:[
+  [19,8.6,'いらっしゃい！',2.5],[19,8.6,null,6]],
+  lines:['いらっしゃい！','この野菜、畑で今朝採れたばかりだよ。','地域の人ともここで顔を合わせるんだ。']}
 ];
 npcs.forEach(n=>n.g.position.set(n.x,0,n.z));
 
@@ -300,7 +314,7 @@ cyl(0.4,0.4,0.3,0x2C2C2A,1.1,0.4,-0.9,van).rotation.x=Math.PI/2;
 
 const bubbles=[];
 function mkBub(cls){ const d=document.createElement('div'); d.className=cls; ui.appendChild(d); return d; }
-npcs.forEach(n=>n.bub=mkBub('bub'));
+npcs.forEach(n=>{ n.bub=mkBub('bub'); n.prompt=mkBub('prompt'); n.prompt.textContent='話す'; n.prompt.addEventListener('click',()=>talkTo(n)); });
 const catB=mkBub('bub'), dogB=mkBub('bub'), bearB=mkBub('bub');
 const plc=[['みんなの家',0,7,-18],['畑エリア　5畝',-24,5.5,-9],['AIラボ',21,7,-15],['癒しの湯',-19,4,15],['地域との交流所',19,5,11],['みんなのキッチン広場',0,4.5,0]].map(p=>{
   const d=mkBub('plc'); d.textContent=p[0]; return {d,v:new THREE.Vector3(p[1],p[2],p[3])};
@@ -315,8 +329,34 @@ function place(el,wx,wy,wz,txt){
   el.style.top=((-V.y*0.5+0.5)*innerHeight)+'px';
 }
 
+let talking=null, lineIdx=0, nearNPC=null;
+const dlgEl=document.getElementById('dlg'), dlgName=document.getElementById('dlgName'), dlgText=document.getElementById('dlgText');
+function talkTo(n){
+  if(talking||!n)return;
+  talking=n; lineIdx=0;
+  n.prompt.style.display='none'; n.bub.style.display='none';
+  showLine();
+}
+function showLine(){
+  dlgName.textContent=talking.name;
+  dlgText.textContent=talking.lines[lineIdx];
+  dlgEl.style.display='block';
+}
+function advanceDlg(){
+  if(!talking)return;
+  lineIdx++;
+  if(lineIdx>=talking.lines.length) closeDlg(); else showLine();
+}
+function closeDlg(){ talking=null; dlgEl.style.display='none'; }
+dlgEl.addEventListener('click',advanceDlg);
+
 const keys={};
-addEventListener('keydown',e=>{ keys[e.key.toLowerCase()]=true; if(e.key.startsWith('Arrow'))e.preventDefault(); });
+addEventListener('keydown',e=>{
+  keys[e.key.toLowerCase()]=true; if(e.key.startsWith('Arrow'))e.preventDefault();
+  if(e.key.toLowerCase()==='f'||e.key==='Enter'){
+    if(talking) advanceDlg(); else if(nearNPC) talkTo(nearNPC);
+  }
+});
 addEventListener('keyup',e=>{ keys[e.key.toLowerCase()]=false; });
 let camTh=0, camPh=0.6, camD=16;
 addEventListener('wheel',e=>{ camD=Math.max(6,Math.min(34,camD*(1+e.deltaY*0.001))); },{passive:true});
@@ -348,7 +388,6 @@ const skyK=[[0,[0xBE,0xE0,0xEC]],[0.36,[0xBE,0xE0,0xEC]],[0.44,[0xF2,0xA6,0x5E]]
 const nightK=[[0,0],[0.38,0],[0.52,1],[0.78,1],[0.90,0],[1,0]];
 function keyed(K,t){ for(let i=0;i<K.length-1;i++) if(t>=K[i][0]&&t<=K[i+1][0]){ const u=(t-K[i][0])/(K[i+1][0]-K[i][0]); return [K[i][1],K[i+1][1],u]; } return [K[0][1],K[0][1],0]; }
 const CY=90;
-const greet=['ようこそ！','いい村でしょう','ゆっくりしてね','いらっしゃい！'];
 
 let last=performance.now(), T=0;
 function frame(now){
@@ -366,8 +405,8 @@ function frame(now){
 
   MIX.forEach(m=>m.update(dt));
   CLOUDS.forEach(c=>{ c.position.x+=0.5*dt; if(c.position.x>70)c.position.x=-70; });
-  let mx=(keys['a']||keys['arrowleft']?-1:0)+(keys['d']||keys['arrowright']?1:0)+tvec.x;
-  let mz=(keys['w']||keys['arrowup']?-1:0)+(keys['s']||keys['arrowdown']?1:0)+tvec.y;
+  let mx=talking?0:(keys['a']||keys['arrowleft']?-1:0)+(keys['d']||keys['arrowright']?1:0)+tvec.x;
+  let mz=talking?0:(keys['w']||keys['arrowup']?-1:0)+(keys['s']||keys['arrowdown']?1:0)+tvec.y;
   const ml=Math.hypot(mx,mz);
   if(keys['q'])camTh+=1.8*dt;
   if(keys['e'])camTh-=1.8*dt;
@@ -389,20 +428,26 @@ function frame(now){
   camera.position.z+=(ctz-camera.position.z)*0.15;
   camera.lookAt(player.position.x, 1.8, player.position.z);
 
+  nearNPC=null;
   npcs.forEach(n=>{
-    const w=n.wp[n.i];
-    if(n.ph==='wait'){ n.tm-=dt; if(n.tm<=0){ n.i=(n.i+1)%n.wp.length; n.ph='move'; } }
-    else{ const dx=n.wp[n.i][0]-n.x, dz=n.wp[n.i][1]-n.z, d=Math.hypot(dx,dz);
-      if(d<0.15){ n.x=n.wp[n.i][0]; n.z=n.wp[n.i][1]; n.ph='wait'; n.tm=Math.max(n.wp[n.i][3],0.1); }
-      else{ n.x+=dx/d*n.sp*dt; n.z+=dz/d*n.sp*dt; n.g.rotation.y=Math.atan2(dx,dz); } }
+    const frozen = talking===n;
+    if(!frozen){
+      if(n.ph==='wait'){ n.tm-=dt; if(n.tm<=0){ n.i=(n.i+1)%n.wp.length; n.ph='move'; } }
+      else{ const dx=n.wp[n.i][0]-n.x, dz=n.wp[n.i][1]-n.z, d=Math.hypot(dx,dz);
+        if(d<0.15){ n.x=n.wp[n.i][0]; n.z=n.wp[n.i][1]; n.ph='wait'; n.tm=Math.max(n.wp[n.i][3],0.1); }
+        else{ n.x+=dx/d*n.sp*dt; n.z+=dz/d*n.sp*dt; n.g.rotation.y=Math.atan2(dx,dz); } }
+    }
     n.g.position.set(n.x, 0, n.z);
-    setAnim(n.g, n.ph==='move'?'walk':'idle');
-    const pd=Math.hypot(player.position.x-n.x, player.position.z-n.z);
+    setAnim(n.g, (!frozen&&n.ph==='move')?'walk':'idle');
+    const pdn=Math.hypot(player.position.x-n.x, player.position.z-n.z);
+    const inRange = pdn<5 && !talking;
+    if(inRange){ nearNPC=nearNPC||n; n.g.rotation.y=Math.atan2(player.position.x-n.x, player.position.z-n.z); }
+    if(frozen){ n.g.rotation.y=Math.atan2(player.position.x-n.x, player.position.z-n.z); place(n.prompt,n.x,3.4,n.z,''); n.prompt.style.display='none'; n.bub.style.display='none'; return; }
+    if(inRange){ place(n.prompt,n.x,3.9,n.z,'話す [F]'); n.bub.style.display='none'; return; }
+    n.prompt.style.display='none';
     let txt=null;
     if(n.ph==='wait'&&n.wp[n.i][2]) txt=n.wp[n.i][2];
-    if(pd<5) txt=greet[npcs.indexOf(n)];
-    if(txt){ if(pd<5) n.g.rotation.y=Math.atan2(player.position.x-n.x, player.position.z-n.z); place(n.bub,n.x,3.4,n.z,txt); }
-    else n.bub.style.display='none';
+    if(txt) place(n.bub,n.x,3.4,n.z,txt); else n.bub.style.display='none';
   });
 
   steams.forEach(s=>{ const y=s.b+((T+s.p)%3)*0.8; s.m.position.y=y; s.m.material.opacity=0.6*(1-((T+s.p)%3)/3); });
