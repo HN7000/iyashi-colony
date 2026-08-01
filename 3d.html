@@ -30,7 +30,7 @@
 <div id="ui">
   <a id="back" href="index.html">← 絵地図にもどる</a>
   <div id="ttl">癒しのコロニー 3D</div>
-  <div id="hint">PC: WASD / 矢印キーで移動　スマホ: 画面をドラッグ</div>
+  <div id="hint">PC: WASD移動・ドラッグ視点・ホイールzoom・Q/E回転　スマホ: 1本指移動・2本指ズーム回転</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -158,7 +158,7 @@ function eye(g,x,y,z){
 function blush(g,x,y,z){ const p=sph(0.1,0xF2A4A4,x,y,z,g); p.scale.set(1,0.55,0.45); }
 const MIX=[]; let LOADED=0; const TOTAL=5;
 function upHint(){ const h=document.getElementById('hint');
-  h.textContent = LOADED<TOTAL ? '住人を呼んでいます… '+LOADED+'/'+TOTAL : 'PC: WASD / 矢印キーで移動　スマホ: 画面をドラッグ'; }
+  h.textContent = LOADED<TOTAL ? '住人を呼んでいます… '+LOADED+'/'+TOTAL : 'PC: WASD移動・ドラッグ視点・ホイールzoom・Q/E回転　スマホ: 1本指移動・2本指ズーム回転'; }
 function person(file){
   const g=new THREE.Group();
   const sh=new THREE.Mesh(new THREE.CircleGeometry(0.65,12),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.15}));
@@ -290,12 +290,30 @@ function place(el,wx,wy,wz,txt){
 const keys={};
 addEventListener('keydown',e=>{ keys[e.key.toLowerCase()]=true; if(e.key.startsWith('Arrow'))e.preventDefault(); });
 addEventListener('keyup',e=>{ keys[e.key.toLowerCase()]=false; });
-let touch=null, tvec={x:0,y:0};
-addEventListener('touchstart',e=>{ const t=e.touches[0]; touch={x:t.clientX,y:t.clientY}; },{passive:true});
-addEventListener('touchmove',e=>{ if(!touch)return; const t=e.touches[0];
+let camTh=0, camPh=0.6, camD=16;
+addEventListener('wheel',e=>{ camD=Math.max(6,Math.min(34,camD*(1+e.deltaY*0.001))); },{passive:true});
+let drag=null;
+renderer.domElement.addEventListener('mousedown',e=>{ drag={x:e.clientX,y:e.clientY}; });
+addEventListener('mousemove',e=>{ if(!drag)return;
+  camTh-=(e.clientX-drag.x)*0.005;
+  camPh=Math.max(0.15,Math.min(1.35,camPh+(e.clientY-drag.y)*0.005));
+  drag={x:e.clientX,y:e.clientY}; });
+addEventListener('mouseup',()=>{ drag=null; });
+let touch=null, tvec={x:0,y:0}, pinch=null;
+function pd(e){ const a=e.touches[0],b=e.touches[1]; return {d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY), x:(a.clientX+b.clientX)/2}; }
+addEventListener('touchstart',e=>{
+  if(e.touches.length>=2){ pinch=pd(e); touch=null; tvec.x=0; tvec.y=0; }
+  else { const t=e.touches[0]; touch={x:t.clientX,y:t.clientY}; } },{passive:true});
+addEventListener('touchmove',e=>{
+  if(e.touches.length>=2&&pinch){ const n=pd(e);
+    camD=Math.max(6,Math.min(34,camD*(pinch.d/Math.max(n.d,1))));
+    camTh-=(n.x-pinch.x)*0.008; pinch=n; return; }
+  if(!touch)return; const t=e.touches[0];
   tvec.x=(t.clientX-touch.x)/50; tvec.y=(t.clientY-touch.y)/50;
   const l=Math.hypot(tvec.x,tvec.y); if(l>1){tvec.x/=l;tvec.y/=l;} },{passive:true});
-addEventListener('touchend',()=>{ touch=null; tvec.x=0; tvec.y=0; });
+addEventListener('touchend',e=>{
+  if(e.touches.length<2)pinch=null;
+  if(e.touches.length===0){ touch=null; tvec.x=0; tvec.y=0; } });
 addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
 
 const skyK=[[0,[0xBE,0xE0,0xEC]],[0.36,[0xBE,0xE0,0xEC]],[0.44,[0xF2,0xA6,0x5E]],[0.52,[0x18,0x22,0x38]],[0.78,[0x18,0x22,0x38]],[0.86,[0xF4,0xC8,0x9A]],[0.92,[0xBE,0xE0,0xEC]],[1,[0xBE,0xE0,0xEC]]];
@@ -322,18 +340,25 @@ function frame(now){
   let mx=(keys['a']||keys['arrowleft']?-1:0)+(keys['d']||keys['arrowright']?1:0)+tvec.x;
   let mz=(keys['w']||keys['arrowup']?-1:0)+(keys['s']||keys['arrowdown']?1:0)+tvec.y;
   const ml=Math.hypot(mx,mz);
+  if(keys['q'])camTh+=1.8*dt;
+  if(keys['e'])camTh-=1.8*dt;
   if(ml>0.01){
     mx/=Math.max(ml,1); mz/=Math.max(ml,1);
-    player.position.x=Math.max(-55,Math.min(55,player.position.x+mx*7*dt));
-    player.position.z=Math.max(-42,Math.min(50,player.position.z+mz*7*dt));
-    player.rotation.y=Math.atan2(mx,mz);
+    const wx=mx*Math.cos(camTh)+mz*Math.sin(camTh);
+    const wz=-mx*Math.sin(camTh)+mz*Math.cos(camTh);
+    player.position.x=Math.max(-55,Math.min(55,player.position.x+wx*7*dt));
+    player.position.z=Math.max(-42,Math.min(50,player.position.z+wz*7*dt));
+    player.rotation.y=Math.atan2(wx,wz);
     setAnim(player,'walk');
   } else setAnim(player,'idle');
 
-  camera.position.x+= (player.position.x - camera.position.x)*0.08;
-  camera.position.y+= (player.position.y+9 - camera.position.y)*0.08;
-  camera.position.z+= (player.position.z+13 - camera.position.z)*0.08;
-  camera.lookAt(player.position.x, 1.5, player.position.z);
+  const ctx2=player.position.x+camD*Math.sin(camTh)*Math.cos(camPh);
+  const cty=camD*Math.sin(camPh)+1.5;
+  const ctz=player.position.z+camD*Math.cos(camTh)*Math.cos(camPh);
+  camera.position.x+=(ctx2-camera.position.x)*0.15;
+  camera.position.y+=(cty-camera.position.y)*0.15;
+  camera.position.z+=(ctz-camera.position.z)*0.15;
+  camera.lookAt(player.position.x, 1.8, player.position.z);
 
   npcs.forEach(n=>{
     const w=n.wp[n.i];
