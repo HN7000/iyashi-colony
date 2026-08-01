@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>癒しのコロニー — AIと感覚で生きる村</title>
+<meta name="description" content="頭脳はAIへ、感覚は人間へ。畑・AIラボ・癒しの湯・地域との交流所・みんなのキッチン広場がある、昼夜の巡る小さな村のアニメーション。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#3A4A2A; --paper:#F6F1E3; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 24px 16px 40px;
+  }
+  header { text-align: center; margin-bottom: 18px; }
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: 0.05em; }
+  header p { font-size: 14px; margin-top: 6px; opacity: 0.75; }
+  .village {
+    width: 100%; max-width: 760px;
+    background: #FFFDF6;
+    border: 1px solid #E3DAC2;
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 6px 24px rgba(90, 80, 40, 0.10);
+  }
+  .village svg { display: block; width: 100%; height: auto; border-radius: 10px; }
+  .legend {
+    width: 100%; max-width: 760px;
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-top: 16px; font-size: 13px;
+  }
+  .legend span { background: #FFFFFF; border: 1px solid #E3DAC2; border-radius: 999px; padding: 4px 12px; }
+  footer { margin-top: 22px; font-size: 12px; opacity: 0.6; text-align: center; line-height: 1.8; }
+</style>
+</head>
+<body>
+<header>
+  <h1>癒しのコロニー</h1>
+  <p>頭脳はAIへ、感覚は人間へ。— 昼と夜が巡る、小さな村のものがたり</p>
+</header>
+
+<div class="village">
+<svg viewBox="0 0 680 660" role="img" aria-label="動くコロニーの村。住人が歩き回り、昼夜が巡る">
+<rect id="sky" x="0" y="0" width="680" height="120" fill="#BEE0EC"/>
+<g id="stars" opacity="0"><circle cx="60" cy="30" r="1.5" fill="#FFF"/><circle cx="150" cy="18" r="1.2" fill="#FFF"/><circle cx="240" cy="40" r="1.5" fill="#FFF"/><circle cx="330" cy="22" r="1.2" fill="#FFF"/><circle cx="420" cy="36" r="1.5" fill="#FFF"/><circle cx="500" cy="16" r="1.2" fill="#FFF"/><circle cx="580" cy="30" r="1.5" fill="#FFF"/><circle cx="640" cy="52" r="1.2" fill="#FFF"/><circle cx="100" cy="60" r="1.2" fill="#FFF"/><circle cx="380" cy="60" r="1.2" fill="#FFF"/><circle cx="550" cy="66" r="1.3" fill="#FFF"/><circle cx="200" cy="72" r="1.2" fill="#FFF"/></g>
+<circle id="sun" cx="612" cy="46" r="22" fill="#F7C948"/>
+<g id="moon" opacity="0"><circle cx="0" cy="0" r="16" fill="#EDE8D8"/><circle cx="-5" cy="-3" r="3" fill="#D8D2BE"/><circle cx="5" cy="6" r="2.2" fill="#D8D2BE"/></g>
+<path d="M0 120 L90 46 L200 120 Z" fill="#7FA36E"/>
+<path d="M120 120 L230 30 L360 120 Z" fill="#8FB27E"/>
+<path d="M300 120 L400 58 L500 120 Z" fill="#7FA36E"/>
+<g id="mky"><circle cx="228" cy="66" r="8" fill="#9C6B4A"/><circle cx="228" cy="64" r="5" fill="#E8C9A8"/><circle cx="222" cy="60" r="2.5" fill="#9C6B4A"/><circle cx="234" cy="60" r="2.5" fill="#9C6B4A"/><circle cx="248" cy="74" r="6" fill="#9C6B4A"/><circle cx="248" cy="72.5" r="3.8" fill="#E8C9A8"/></g>
+<rect x="0" y="120" width="680" height="540" fill="#D9E7BC"/>
+<path d="M340 596 L340 470 M340 470 Q300 400 252 330 M340 470 Q420 420 470 400 M340 470 Q260 500 218 512 M340 470 Q430 350 500 268 M340 470 L340 240" fill="none" stroke="#EBDAAE" stroke-width="18" stroke-linecap="round"/>
+<ellipse cx="340" cy="465" rx="80" ry="48" fill="#EBDAAE"/>
+<rect x="60" y="238" width="190" height="104" rx="8" fill="#C9A26B"/>
+<rect x="72" y="252" width="166" height="10" rx="5" fill="#A9814F"/><rect x="72" y="276" width="166" height="10" rx="5" fill="#A9814F"/><rect x="72" y="300" width="166" height="10" rx="5" fill="#A9814F"/>
+<circle cx="92" cy="255" r="5" fill="#6FA84E"/><circle cx="122" cy="255" r="5" fill="#6FA84E"/><circle cx="152" cy="255" r="5" fill="#6FA84E"/><circle cx="182" cy="255" r="5" fill="#6FA84E"/><circle cx="212" cy="255" r="5" fill="#6FA84E"/><circle cx="107" cy="279" r="5" fill="#8FBF62"/><circle cx="137" cy="279" r="5" fill="#8FBF62"/><circle cx="167" cy="279" r="5" fill="#8FBF62"/><circle cx="197" cy="279" r="5" fill="#8FBF62"/><circle cx="92" cy="303" r="5" fill="#6FA84E"/><circle cx="122" cy="303" r="5" fill="#6FA84E"/><circle cx="152" cy="303" r="5" fill="#6FA84E"/><circle cx="182" cy="303" r="5" fill="#6FA84E"/><circle cx="212" cy="303" r="5" fill="#6FA84E"/>
+<line x1="238" y1="322" x2="238" y2="292" stroke="#8A6A42" stroke-width="3"/><line x1="228" y1="300" x2="248" y2="300" stroke="#8A6A42" stroke-width="3"/><circle cx="238" cy="288" r="6" fill="#F7C948"/>
+<rect x="88" y="222" width="110" height="20" rx="10" fill="#FFFFFF" opacity="0.9"/><text x="143" y="236" text-anchor="middle" class="lbl">畑エリア　5畝</text>
+<polygon points="452,192 530,150 608,192" fill="#4A6FA5"/>
+<rect x="470" y="160" width="24" height="14" fill="#2E4A78" transform="rotate(-28 482 167)"/><rect x="540" y="152" width="24" height="14" fill="#2E4A78" transform="rotate(28 552 159)"/>
+<rect x="464" y="192" width="132" height="66" rx="4" fill="#F2E9D8"/>
+<rect id="lw1" x="478" y="206" width="24" height="20" rx="3" fill="#F7C948"/><rect id="lw2" x="514" y="206" width="24" height="20" rx="3" fill="#F7C948"/>
+<rect x="558" y="214" width="22" height="44" rx="3" fill="#B08050"/>
+<line x1="530" y1="150" x2="530" y2="128" stroke="#5F5E5A" stroke-width="2"/><circle cx="530" cy="124" r="4" fill="#D85A30"/>
+<rect x="612" y="222" width="22" height="26" rx="6" fill="#9AA7B8"/><circle cx="623" cy="212" r="9" fill="#B8C4D2"/><circle cx="619" cy="211" r="2" fill="#2C2C2A"/><circle cx="627" cy="211" r="2" fill="#2C2C2A"/>
+<rect x="482" y="266" width="96" height="20" rx="10" fill="#FFFFFF" opacity="0.9"/><text x="530" y="280" text-anchor="middle" class="lbl">AIラボ</text>
+<ellipse cx="150" cy="512" rx="88" ry="42" fill="#8B8B7A"/><ellipse cx="150" cy="510" rx="76" ry="34" fill="#9FD4E4"/>
+<circle cx="66" cy="496" r="8" fill="#77776A"/><circle cx="228" cy="500" r="9" fill="#77776A"/><circle cx="102" cy="546" r="8" fill="#77776A"/><circle cx="196" cy="542" r="8" fill="#77776A"/>
+<circle cx="126" cy="506" r="8" fill="#F0C8A0"/><path d="M118 502 a8 8 0 0 1 16 0" fill="#5F4A3A"/>
+<circle cx="176" cy="512" r="8" fill="#E8B890"/><path d="M168 508 a8 8 0 0 1 16 0" fill="#8A8A8A"/>
+<g id="st1"><path d="M138 478 q-6 -10 0 -20 q6 -10 0 -18" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.8" stroke-linecap="round"/></g>
+<g id="st2"><path d="M162 480 q-6 -10 0 -20 q6 -10 0 -18" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.8" stroke-linecap="round"/></g>
+<rect x="96" y="560" width="108" height="20" rx="10" fill="#FFFFFF" opacity="0.9"/><text x="150" y="574" text-anchor="middle" class="lbl">癒しの湯</text>
+<rect x="470" y="392" width="120" height="12" fill="#D85A30"/><rect x="470" y="392" width="20" height="12" fill="#F2E9D8"/><rect x="510" y="392" width="20" height="12" fill="#F2E9D8"/><rect x="550" y="392" width="20" height="12" fill="#F2E9D8"/>
+<rect x="478" y="404" width="104" height="34" rx="3" fill="#B08050"/>
+<circle cx="500" cy="416" r="5" fill="#D85A30"/><circle cx="516" cy="416" r="5" fill="#F7C948"/><circle cx="532" cy="416" r="5" fill="#6FA84E"/>
+<rect x="464" y="446" width="132" height="20" rx="10" fill="#FFFFFF" opacity="0.9"/><text x="530" y="460" text-anchor="middle" class="lbl">地域との交流所</text>
+<ellipse cx="340" cy="462" rx="66" ry="38" fill="#E2CFA0"/>
+<ellipse cx="340" cy="452" rx="16" ry="9" fill="#4A4A46"/><rect x="326" y="452" width="28" height="12" rx="4" fill="#4A4A46"/>
+<polygon id="fire" points="330,472 335,462 340,472 345,462 350,472" fill="#E8862E"/>
+<g id="st3"><path d="M336 440 q-4 -8 0 -14" fill="none" stroke="#FFFFFF" stroke-width="2.5" opacity="0.8" stroke-linecap="round"/><path d="M346 440 q4 -8 0 -14" fill="none" stroke="#FFFFFF" stroke-width="2.5" opacity="0.8" stroke-linecap="round"/></g>
+<rect x="266" y="510" width="148" height="20" rx="10" fill="#FFFFFF" opacity="0.9"/><text x="340" y="524" text-anchor="middle" class="lbl">みんなのキッチン広場</text>
+<polygon points="282,184 340,148 398,184" fill="#C96A4A"/>
+<rect x="300" y="158" width="22" height="13" fill="#2E4A78" transform="rotate(-30 311 164)"/>
+<rect x="292" y="184" width="96" height="52" rx="4" fill="#F2E9D8"/>
+<rect x="328" y="204" width="22" height="32" rx="3" fill="#B08050"/>
+<rect id="hw1" x="302" y="196" width="18" height="16" rx="3" fill="#F7C948"/><rect id="hw2" x="360" y="196" width="18" height="16" rx="3" fill="#F7C948"/>
+<rect x="296" y="120" width="88" height="20" rx="10" fill="#FFFFFF" opacity="0.9"/><text x="340" y="134" text-anchor="middle" class="lbl">みんなの家</text>
+<rect x="622" y="310" width="8" height="24" fill="#8A6A42"/><circle cx="626" cy="300" r="20" fill="#5F8F4E"/>
+<g id="bear" transform="translate(626 372)"><circle cx="0" cy="0" r="14" fill="#8A6A42"/><circle cx="0" cy="-16" r="9" fill="#8A6A42"/><circle cx="-6" cy="-23" r="3.5" fill="#8A6A42"/><circle cx="6" cy="-23" r="3.5" fill="#8A6A42"/><circle cx="0" cy="-14" r="4" fill="#C9A26B"/><circle cx="-3.5" cy="-18" r="1.5" fill="#2C2C2A"/><circle cx="3.5" cy="-18" r="1.5" fill="#2C2C2A"/></g>
+<g id="bearb" opacity="0" transform="translate(626 352)"><rect x="-45" y="-40" width="90" height="22" rx="8" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/><polygon points="-4,-19 4,-19 0,-12" fill="#FFFFFF"/><text y="-24" text-anchor="middle" class="lbl">こんにちは</text></g>
+<circle cx="606" cy="352" r="15" fill="#6FA84E"/><circle cx="632" cy="358" r="17" fill="#7FB85E"/><circle cx="656" cy="350" r="14" fill="#6FA84E"/>
+<rect x="0" y="596" width="680" height="34" fill="#CFC39B"/>
+<line x1="20" y1="613" x2="660" y2="613" stroke="#F2E9D8" stroke-width="2" stroke-dasharray="14 12"/>
+<rect id="nite" x="0" y="120" width="680" height="540" fill="#0E1830" opacity="0"/>
+<circle id="glow" cx="340" cy="462" r="55" fill="#F7A040" opacity="0"/>
+<g id="cat" transform="translate(265 238)"><ellipse cx="5" cy="0" rx="9" ry="6" fill="#E8862E"/><circle cx="-4" cy="-4" r="5" fill="#E8862E"/><polygon points="-7,-8 -5,-13 -3,-8" fill="#E8862E"/><polygon points="-4,-8 -2,-13 0,-8" fill="#E8862E"/><path id="ctl" d="M14 0 q6 -2 5 -8" fill="none" stroke="#E8862E" stroke-width="2" stroke-linecap="round"/></g>
+<g id="catb" opacity="0" transform="translate(265 238)"><rect x="-27" y="-46" width="54" height="20" rx="8" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/><polygon points="-4,-26 4,-26 0,-20" fill="#FFFFFF"/><text y="-32" text-anchor="middle" class="lbl">にゃー</text></g>
+<g id="dog" transform="translate(415 238)"><g id="dogf"><ellipse cx="0" cy="0" rx="10" ry="7" fill="#8A6A42"/><circle cx="11" cy="-6" r="5.5" fill="#8A6A42"/><polygon points="8,-10 10,-15 12,-10" fill="#8A6A42"/><polygon points="12,-10 14,-15 16,-10" fill="#8A6A42"/><path d="M-10 -2 q-5 -3 -4 -8" fill="none" stroke="#8A6A42" stroke-width="2" stroke-linecap="round"/></g></g>
+<g id="dogb" opacity="0" transform="translate(415 238)"><rect x="-27" y="-46" width="54" height="20" rx="8" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/><polygon points="-4,-26 4,-26 0,-20" fill="#FFFFFF"/><text y="-32" text-anchor="middle" class="lbl">わん！</text></g>
+<g id="deer" transform="translate(720 560)"><g id="deerf" transform="scale(-1 1)"><ellipse cx="0" cy="0" rx="14" ry="8" fill="#C29B6B"/><rect x="-10" y="6" width="2.5" height="10" fill="#A9814F"/><rect x="-4" y="6" width="2.5" height="10" fill="#A9814F"/><rect x="4" y="6" width="2.5" height="10" fill="#A9814F"/><rect x="9" y="6" width="2.5" height="10" fill="#A9814F"/><circle cx="16" cy="-12" r="5.5" fill="#C29B6B"/><path d="M12 -4 L16 -8" stroke="#C29B6B" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M14 -16 l-2 -6 M14 -16 l3 -7 M17 -19 l3 -3" stroke="#8A6A42" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="-13" cy="-3" r="2.5" fill="#F2E9D8"/></g></g>
+<g id="van" transform="translate(124 594)"><g id="vanf"><rect x="-48" y="-6" width="96" height="26" rx="8" fill="#6FB39E"/><rect x="-38" y="-14" width="50" height="14" rx="4" fill="#8FCBB8"/><rect x="-34" y="-11" width="18" height="9" rx="2" fill="#BEE0EC"/><rect x="-12" y="-11" width="18" height="9" rx="2" fill="#BEE0EC"/><rect x="-40" y="-20" width="56" height="6" rx="2" fill="#2E4A78"/><circle cx="-28" cy="20" r="8" fill="#2C2C2A"/><circle cx="26" cy="20" r="8" fill="#2C2C2A"/><circle cx="-28" cy="20" r="3" fill="#B4B2A9"/><circle cx="26" cy="20" r="3" fill="#B4B2A9"/></g></g>
+<g id="c1" transform="translate(340 252)"><g id="c1f"><ellipse cy="3" rx="9" ry="3" fill="#000" opacity="0.12"/><rect x="-7" y="-16" width="14" height="18" rx="6" fill="#4A8B6F"/><circle cy="-22" r="7" fill="#F0C8A0"/><path d="M-7 -24 a7 7 0 0 1 14 0" fill="#5F4A3A"/></g><g id="c1b" opacity="0"><rect id="c1br" x="-40" y="-66" width="80" height="22" rx="8" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/><polygon points="-4,-45 4,-45 0,-38" fill="#FFFFFF"/><text id="c1bt" y="-50" text-anchor="middle" class="lbl"></text></g></g>
+<g id="c2" transform="translate(372 470)"><g id="c2f"><ellipse cy="3" rx="9" ry="3" fill="#000" opacity="0.12"/><rect x="-7" y="-16" width="14" height="18" rx="6" fill="#7A5C9E"/><circle cy="-22" r="7" fill="#E8B890"/><path d="M-7 -24 a7 7 0 0 1 14 0" fill="#2C2C2A"/></g><g id="c2b" opacity="0"><rect id="c2br" x="-40" y="-66" width="80" height="22" rx="8" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/><polygon points="-4,-45 4,-45 0,-38" fill="#FFFFFF"/><text id="c2bt" y="-50" text-anchor="middle" class="lbl"></text></g></g>
+<g id="c3" transform="translate(190 510)"><g id="c3f"><ellipse cy="3" rx="9" ry="3" fill="#000" opacity="0.12"/><rect x="-7" y="-16" width="14" height="18" rx="6" fill="#C96A4A"/><circle cy="-22" r="7" fill="#F0C8A0"/><path d="M-7 -24 a7 7 0 0 1 14 0" fill="#8A6A42"/></g><g id="c3b" opacity="0"><rect id="c3br" x="-40" y="-66" width="80" height="22" rx="8" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/><polygon points="-4,-45 4,-45 0,-38" fill="#FFFFFF"/><text id="c3bt" y="-50" text-anchor="middle" class="lbl"></text></g></g>
+<g id="c4" transform="translate(612 432)"><g id="c4f"><ellipse cy="3" rx="9" ry="3" fill="#000" opacity="0.12"/><rect x="-7" y="-16" width="14" height="18" rx="6" fill="#3E7A8C"/><circle cy="-22" r="7" fill="#F0C8A0"/><path d="M-8 -22 a8 8 0 0 1 16 0" fill="#8A6A42"/></g><g id="c4b" opacity="0"><rect id="c4br" x="-40" y="-66" width="80" height="22" rx="8" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/><polygon points="-4,-45 4,-45 0,-38" fill="#FFFFFF"/><text id="c4bt" y="-50" text-anchor="middle" class="lbl"></text></g></g>
+<style>.lbl{font:12px 'Zen Maru Gothic',sans-serif;fill:#3A4A2A}</style>
+</svg>
+</div>
+
+<div class="legend">
+  <span>畑エリア — 食べものを育てる</span>
+  <span>AIラボ — 考える仕事はAIへ</span>
+  <span>癒しの湯 — 急かされない時間</span>
+  <span>地域との交流所 — ひらかれた市場</span>
+  <span>キッチン広場 — 村の心臓</span>
+</div>
+
+<footer>
+  頭脳はAIへ、感覚は人間へ。治そうとしなくても、治っていく場所。<br>
+  Made with Claude (Fable 5)
+</footer>
+
+<script>
+const $=i=>document.getElementById(i);
+const lerp=(a,b,u)=>a+(b-a)*u;
+function hx(c){return [parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)]}
+function mix(a,b,u){const A=hx(a),B=hx(b);return 'rgb('+Math.round(lerp(A[0],B[0],u))+','+Math.round(lerp(A[1],B[1],u))+','+Math.round(lerp(A[2],B[2],u))+')'}
+function keyed(keys,t){for(let i=0;i<keys.length-1;i++){if(t>=keys[i][0]&&t<=keys[i+1][0]){const u=(t-keys[i][0])/(keys[i+1][0]-keys[i][0]);return [keys[i][1],keys[i+1][1],u]}}return [keys[0][1],keys[0][1],0]}
+const skyK=[[0,'#BEE0EC'],[0.36,'#BEE0EC'],[0.44,'#F2A65E'],[0.52,'#182238'],[0.78,'#182238'],[0.86,'#F4C89A'],[0.92,'#BEE0EC'],[1,'#BEE0EC']];
+const nightK=[[0,0],[0.38,0],[0.52,1],[0.78,1],[0.90,0],[1,0]];
+const CY=48;
+const chars=[
+{g:'c1',x:340,y:252,wp:[[340,252,'いってきます',1.6],[310,468,null,0.2],[240,332,'野菜が元気！',3],[310,468,null,0.2],[208,500,'いい湯だなあ',3.5],[310,468,null,0.2],[340,252,'ただいま',2.5]]},
+{g:'c2',x:372,y:470,wp:[[372,470,'ごはんにしよう',2.2],[516,278,'AIが動いたよ',3.5],[372,470,null,0.8],[468,428,'こんにちは',3],[372,470,null,1]]},
+{g:'c3',x:190,y:510,wp:[[190,510,'ふう、極楽',4],[340,486,'いいにおい！',2.8],[560,432,'野菜ください',3],[340,486,null,0.5]]},
+{g:'c4',x:612,y:432,wp:[[612,432,'いらっしゃい！',2.4],[612,432,null,6]]}
+];
+chars.forEach(c=>{c.i=0;c.ph='wait';c.tm=1+Math.random()*2;c.fx=1});
+function bub(c,txt){const b=$(c.g+'b'),r=$(c.g+'br'),t=$(c.g+'bt');if(!txt){b.setAttribute('opacity','0');return}const w=txt.length*13+16;r.setAttribute('x',-w/2);r.setAttribute('width',w);t.textContent=txt;b.setAttribute('opacity','1')}
+let last=null,T=0;
+function frame(ts){
+if(last===null)last=ts;let dt=Math.min((ts-last)/1000,0.05);last=ts;T+=dt;
+const t=(T%CY)/CY;
+const [a,b,u]=keyed(skyK,t);$('sky').setAttribute('fill',mix(a,b,u));
+const [na,nb,nu]=keyed(nightK,t);const night=lerp(na,nb,nu);
+$('nite').setAttribute('opacity',(0.32*night).toFixed(3));
+$('stars').setAttribute('opacity',night.toFixed(2));
+$('glow').setAttribute('opacity',(0.22*night).toFixed(3));
+const dayT=((t-0.90+1)%1)/0.50, moonT=((t-0.44+1)%1)/0.42;
+if(dayT>=0&&dayT<=1){$('sun').setAttribute('opacity','1');$('sun').setAttribute('cx',-40+dayT*760);$('sun').setAttribute('cy',95-Math.sin(Math.PI*dayT)*62)}else $('sun').setAttribute('opacity','0');
+if(moonT>=0&&moonT<=1){$('moon').setAttribute('opacity',String(0.95*night));$('moon').setAttribute('transform','translate('+(-40+moonT*760)+' '+(90-Math.sin(Math.PI*moonT)*58)+')')}else $('moon').setAttribute('opacity','0');
+const win=night>0.5?'#FFD966':'#F7C948';['hw1','hw2','lw1','lw2'].forEach(i=>$(i).setAttribute('fill',win));
+$('fire').setAttribute('transform','translate(340 472) scale(1 '+(0.85+0.25*Math.abs(Math.sin(T*9))+0.3*night)+') translate(-340 -472)');
+[['st1',0],['st2',1.5],['st3',0.7]].forEach(s=>{const g=$(s[0]);g.setAttribute('transform','translate(0 '+(-3+3*Math.sin(T*1.6+s[1]))+')');g.setAttribute('opacity',String(0.55+0.3*Math.sin(T*1.6+s[1])))});
+$('ctl').setAttribute('d','M14 0 q6 -2 '+(5+2*Math.sin(T*4))+' -8');
+$('mky').setAttribute('transform','translate(0 '+(1.5*Math.sin(T*2.2))+')');
+const dgx=26*Math.sin(T*0.9);$('dog').setAttribute('transform','translate('+(415+dgx)+' '+(238-Math.abs(3*Math.sin(T*7)))+')');$('dogf').setAttribute('transform','scale('+(Math.cos(T*0.9)>=0?1:-1)+' 1)');$('dogb').setAttribute('transform','translate('+(415+dgx)+' 238)');
+const ct=T%13;$('catb').setAttribute('opacity',ct<1.8?'1':'0');
+const dt2=T%11;$('dogb').setAttribute('opacity',dt2<1.6?'1':'0');
+const dx=720-((T*16)%840);$('deer').setAttribute('transform','translate('+dx+' '+(560+1.2*Math.sin(T*5))+')');
+const bt=T%20;let by=26,bo=0;
+if(bt>=12&&bt<13)by=26-(bt-12)*26;else if(bt>=13&&bt<17){by=0;bo=1}else if(bt>=17&&bt<18)by=(bt-17)*26;
+$('bear').setAttribute('transform','translate(626 '+(372-26+by)+')');$('bearb').setAttribute('opacity',String(bo));
+const vspan=440,vp=(T*12)%(vspan*2),vx=vp<vspan?124+vp:124+vspan*2-vp;
+$('van').setAttribute('transform','translate('+vx+' 594)');$('vanf').setAttribute('transform','scale('+(vp<vspan?1:-1)+' 1)');
+chars.forEach(c=>{
+if(c.ph==='wait'){c.tm-=dt;if(c.tm<=0){bub(c,null);c.i=(c.i+1)%c.wp.length;c.ph='move'}}
+else{const tx=c.wp[c.i][0],ty=c.wp[c.i][1];const ddx=tx-c.x,ddy=ty-c.y,d=Math.hypot(ddx,ddy);
+if(d<1){c.x=tx;c.y=ty;c.ph='wait';c.tm=Math.max(c.wp[c.i][3],0.1);if(c.wp[c.i][2])bub(c,c.wp[c.i][2])}
+else{const sp=34*dt;c.x+=ddx/d*Math.min(sp,d);c.y+=ddy/d*Math.min(sp,d);if(Math.abs(ddx)>2)c.fx=ddx>0?1:-1}}
+const bob=c.ph==='move'?Math.abs(2.2*Math.sin(T*10)):0;
+$(c.g).setAttribute('transform','translate('+c.x+' '+(c.y-bob)+')');
+$(c.g+'f').setAttribute('transform','scale('+c.fx+' 1)');
+});
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
