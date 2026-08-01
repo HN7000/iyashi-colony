@@ -33,6 +33,10 @@
   #dlgName { font-size:13px; font-weight:700; color:#4A8B6F; margin-bottom:4px; }
   #dlgText { font-size:15px; color:#3A4A2A; line-height:1.6; }
   #dlgHint { font-size:11px; color:#8A8A7E; text-align:right; margin-top:6px; }
+  .chc { display:block; width:100%; text-align:left; background:#EFE9D8; border:1px solid #C9BFA4;
+    border-radius:10px; padding:8px 12px; margin-top:8px; font-family:inherit; font-size:14px;
+    color:#3A4A2A; cursor:pointer; }
+  .chc:hover { background:#E3DAC2; }
 </style>
 </head>
 <body>
@@ -40,7 +44,7 @@
   <a id="back" href="index.html">← 絵地図にもどる</a>
   <div id="ttl">癒しのコロニー 3D</div>
   <div id="hint">PC: WASD移動・ドラッグ視点・ホイールzoom・Q/E回転・Fで話す　スマホ: 1本指移動・2本指ズーム回転・吹き出しタップで話す</div>
-  <div id="dlg"><div id="dlgName"></div><div id="dlgText"></div><div id="dlgHint">タップ / F で続ける</div></div>
+  <div id="dlg"><div id="dlgName"></div><div id="dlgText"></div><div id="dlgChoices"></div><div id="dlgHint">タップ / F で続ける</div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -231,16 +235,24 @@ upHint();
 const npcs=[
 {g:person('Barbarian.glb'),name:'ガル（畑担当）',x:0,z:-15,sp:2.2,i:0,ph:'wait',tm:2,wp:[
   [0,-15,'いってきます',2],[0,0,null,0.3],[-20,-7,'野菜が元気！',3.5],[0,0,null,0.3],[-16,12,'いい湯だなあ',4],[0,0,null,0.3],[0,-15,'ただいま',2.5]],
-  lines:['おっ、遊びに来たのか。','この畑はAIが土の状態を見てくれるから、迷わず種をまけるんだ。','今日採れた野菜、あとで広場に持っていくよ。']},
+  lines:['おっ、遊びに来たのか。','この畑はAIが土の状態を見てくれるから、迷わず種をまけるんだ。','今日採れた野菜、あとで広場に持っていくよ。'],
+  ask:[{q:'畑、手伝おうか？',a:'おお、助かる！じゃあ水やりを頼もうかな。道具は風車小屋にあるぞ。'},
+       {q:'今日のおすすめ野菜は？',a:'朝採れのトマトだな。市場のリンのところに並んでるぞ。'}]},
 {g:person('Mage.glb'),name:'セラ（AIラボ）',x:3,z:2,sp:2.4,i:0,ph:'wait',tm:4,wp:[
   [3,2,'ごはんにしよう',2.5],[17,-12,'AIが動いたよ',3.5],[3,2,null,0.5],[16,9,'こんにちは',3],[3,2,null,1]],
-  lines:['ようこそ、ラボへ。','考える仕事はぜんぶあの子（ロボット）に任せてるの。','浮いた時間で、みんな好きなことをしてるわ。']},
+  lines:['ようこそ、ラボへ。','考える仕事はぜんぶあの子（ロボット）に任せてるの。','浮いた時間で、みんな好きなことをしてるわ。'],
+  ask:[{q:'ラボでは何を作ってるの？',a:'村のみんなの「面倒ごと」を引き受ける仕組みよ。今日は畑の水やりの自動化を作ってるの。'},
+       {q:'ロボットの名前は？',a:'コウって呼んでるわ。よく働いて、たまに詩も書くのよ。'}]},
 {g:person('Rogue.glb'),name:'ノア',x:-15,z:12,sp:2,i:0,ph:'wait',tm:6,wp:[
   [-15,12,'ふう、極楽',4],[-2,3,'いいにおい！',3],[15,10,'野菜ください',3],[-2,3,null,0.5]],
-  lines:['やあ。','温泉、入っていくといいよ。急かす人はここにいないから。','元気になったら、また何か一緒にやろう。']},
+  lines:['やあ。','温泉、入っていくといいよ。急かす人はここにいないから。','元気になったら、また何か一緒にやろう。'],
+  ask:[{q:'最近どう？',a:'ここに来てから、よく眠れるようになったよ。それだけで十分すごいことだと思わない？'},
+       {q:'温泉の入り方のコツは？',a:'何も考えないこと。それが一番むずかしくて、一番きもちいいんだ。'}]},
 {g:person('Rogue_Hooded.glb'),name:'リン（市場）',x:19,z:8.6,sp:2,i:0,ph:'wait',tm:2,wp:[
   [19,8.6,'いらっしゃい！',2.5],[19,8.6,null,6]],
-  lines:['いらっしゃい！','この野菜、畑で今朝採れたばかりだよ。','地域の人ともここで顔を合わせるんだ。']}
+  lines:['いらっしゃい！','この野菜、畑で今朝採れたばかりだよ。','地域の人ともここで顔を合わせるんだ。'],
+  ask:[{q:'野菜をください',a:'はい、どうぞ！ …お代は「ごちそうさま」の一言でいいよ。'},
+       {q:'地域の人は来てくれる？',a:'来るよ。最初は遠巻きだったけど、今は野菜目当ての常連さんもいるんだ。'}]}
 ];
 npcs.forEach(n=>n.g.position.set(n.x,0,n.z));
 
@@ -329,25 +341,46 @@ function place(el,wx,wy,wz,txt){
   el.style.top=((-V.y*0.5+0.5)*innerHeight)+'px';
 }
 
-let talking=null, lineIdx=0, nearNPC=null;
-const dlgEl=document.getElementById('dlg'), dlgName=document.getElementById('dlgName'), dlgText=document.getElementById('dlgText');
+let talking=null, dq=[], nearNPC=null, choicesOpen=false;
+const dlgEl=document.getElementById('dlg'), dlgName=document.getElementById('dlgName'),
+      dlgText=document.getElementById('dlgText'), dlgChoices=document.getElementById('dlgChoices'),
+      dlgHint=document.getElementById('dlgHint');
 function talkTo(n){
   if(talking||!n)return;
-  talking=n; lineIdx=0;
+  talking=n; choicesOpen=false; n.asked=false;
   n.prompt.style.display='none'; n.bub.style.display='none';
-  showLine();
+  dq=n.lines.map(t=>({n:n.name,t:t}));
+  nextDlg();
 }
-function showLine(){
-  dlgName.textContent=talking.name;
-  dlgText.textContent=talking.lines[lineIdx];
-  dlgEl.style.display='block';
+function nextDlg(){
+  if(dq.length){
+    const it=dq.shift();
+    dlgName.textContent=it.n; dlgText.textContent=it.t;
+    dlgChoices.innerHTML=''; dlgHint.style.display='block';
+    dlgEl.style.display='block';
+    return;
+  }
+  if(talking.ask && !talking.asked){ showChoices(); return; }
+  closeDlg();
 }
-function advanceDlg(){
-  if(!talking)return;
-  lineIdx++;
-  if(lineIdx>=talking.lines.length) closeDlg(); else showLine();
+function showChoices(){
+  choicesOpen=true; talking.asked=true;
+  dlgName.textContent=talking.name; dlgText.textContent='……なにか話してみる？';
+  dlgHint.style.display='none'; dlgChoices.innerHTML='';
+  talking.ask.concat([{q:'またね！',a:null}]).forEach(o=>{
+    const b=document.createElement('button'); b.className='chc'; b.textContent=o.q;
+    b.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      choicesOpen=false; dlgChoices.innerHTML=''; dlgHint.style.display='block';
+      if(o.a===null) dq=[{n:'ヒロ',t:'またね！'}];
+      else dq=[{n:'ヒロ',t:o.q},{n:talking.name,t:o.a}];
+      nextDlg();
+    });
+    dlgChoices.appendChild(b);
+  });
 }
-function closeDlg(){ talking=null; dlgEl.style.display='none'; }
+function advanceDlg(){ if(!talking||choicesOpen)return; nextDlg(); }
+function closeDlg(){ talking=null; choicesOpen=false; dlgEl.style.display='none'; }
 dlgEl.addEventListener('click',advanceDlg);
 
 const keys={};
